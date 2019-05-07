@@ -16,6 +16,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SwitchCompat;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
+import android.text.InputFilter;
+import android.text.Spanned;
 import android.text.TextWatcher;
 import android.text.format.DateFormat;
 import android.util.Log;
@@ -23,6 +25,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -44,6 +47,8 @@ import com.wdullaer.materialdatetimepicker.time.TimePickerDialog;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
@@ -53,6 +58,17 @@ import static android.content.Context.MODE_PRIVATE;
 public class AddToDoFragment extends AppDefaultFragment implements DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener {
     private static final String TAG = "AddToDoFragment";
     private Date mLastEdited;
+
+    private EditText mJiFengEidt;
+    private EditText mTimesEidt;
+    private CheckBox mflagCheckBox;
+    private int mJiFeng = 0;
+    private int getmJiFengEntered = 0;
+    private int mTimes = 0;
+    private int getmTimesEntered = 0;
+    private boolean mflag = true;
+    private boolean getmFlagEntered = true;
+
 
     private EditText mToDoTextBodyEditText;
     private EditText mToDoTextBodyDescription;
@@ -135,7 +151,76 @@ public class AddToDoFragment extends AppDefaultFragment implements DatePickerDia
         mUserHasReminder = mUserToDoItem.hasReminder();
         mUserReminderDate = mUserToDoItem.getToDoDate();
         mUserColor = mUserToDoItem.getTodoColor();
+        getmJiFengEntered = mUserToDoItem.getmJifeng();
+        getmTimesEntered = mUserToDoItem.getmTimes();
 
+
+
+
+        mflagCheckBox = (CheckBox) view.findViewById(R.id.FLAG);
+        mflagCheckBox.setChecked(getmFlagEntered);
+        mJiFengEidt = (EditText) view.findViewById(R.id.jiFeng);
+        mJiFengEidt.setText("当前积分为："+getmJiFengEntered);
+        mTimesEidt = (EditText) view.findViewById(R.id.times);
+        mTimesEidt.setText("当前次数为："+getmTimesEntered);
+        InputFilter mInputFilter;
+         InputFilter mInputFilterLengh;
+        mInputFilter = new InputFilter() {
+            @Override
+            public CharSequence filter(CharSequence charSequence, int i, int i1, Spanned spanned, int i2, int i3) {
+                String stringSourse = charSequence.toString();
+                StringBuilder stringBuilder = new StringBuilder();
+                for (int j = 0; j < stringSourse.length(); j++) {
+                    char ch = stringSourse.charAt(j);
+                    //只可以输入数字、字母、汉字
+                    String regEx = "[0-9]";
+                    Pattern p = Pattern.compile(regEx);
+                    Matcher m = p.matcher(ch + "");
+                    if (m.matches()) {
+                        stringBuilder.append(ch);
+                    }
+                }
+                return stringBuilder;
+            }
+        };
+        mInputFilterLengh = new InputFilter.LengthFilter(30);
+        mTimesEidt.setFilters(new InputFilter[]{mInputFilter,mInputFilterLengh});
+        mJiFengEidt.setFilters(new InputFilter[]{mInputFilter,mInputFilterLengh});
+        /*mJiFengEidt.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                String s = charSequence.toString();
+                mJiFeng = Integer.parseInt(s);
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
+        mTimesEidt.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                String s = charSequence.toString();
+                mTimes = Integer.parseInt(s);
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
+*/
 
 //        if(mUserToDoItem.getLastEdited()==null) {
 //            mLastEdited = new Date();
@@ -249,6 +334,9 @@ public class AddToDoFragment extends AppDefaultFragment implements DatePickerDia
                 });
 
 
+
+
+
 //        String lastSeen = formatDate(DATE_FORMAT, mLastEdited);
 //        mLastSeenTextView.setText(String.format(getResources().getString(R.string.last_edited), lastSeen));
 
@@ -298,6 +386,8 @@ public class AddToDoFragment extends AppDefaultFragment implements DatePickerDia
 
         mDateEditText = (EditText) view.findViewById(R.id.newTodoDateEditText);
         mTimeEditText = (EditText) view.findViewById(R.id.newTodoTimeEditText);
+
+
 
         mDateEditText.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -587,6 +677,29 @@ public class AddToDoFragment extends AppDefaultFragment implements DatePickerDia
     public void makeResult(int result) {
         Log.d(TAG, "makeResult - ok : in");
         Intent i = new Intent();
+
+
+        mUserToDoItem.setMflag(mflagCheckBox.isChecked());
+
+        if(mTimesEidt.getText().toString().length() > 0 && mJiFengEidt.getText().toString().length() > 0)
+        {
+            try {
+                mTimes = Integer.parseInt(toNumber(mTimesEidt.getText().toString()).toString());
+                mJiFeng = Integer.parseInt(toNumber(mJiFengEidt.getText().toString()).toString());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }else{
+            mJiFeng = mTimes = 0;
+        }
+
+        getmJiFengEntered = mJiFeng;
+        getmTimesEntered += mTimes;
+        mUserToDoItem.setmJifeng(getmJiFengEntered);
+        mUserToDoItem.setmTimes(getmTimesEntered);
+
+
+
         if (mUserEnteredText.length() > 0) {
 
             String capitalizedString = Character.toUpperCase(mUserEnteredText.charAt(0)) + mUserEnteredText.substring(1);
@@ -712,5 +825,21 @@ public class AddToDoFragment extends AppDefaultFragment implements DatePickerDia
 
     public static AddToDoFragment newInstance() {
         return new AddToDoFragment();
+    }
+
+    private CharSequence toNumber(String s) {
+        String stringSourse = s;
+        StringBuilder stringBuilder = new StringBuilder();
+        for (int j = 0; j < stringSourse.length(); j++) {
+            char ch = stringSourse.charAt(j);
+            //只可以输入数字、字母、汉字
+            String regEx = "[0-9]";
+            Pattern p = Pattern.compile(regEx);
+            Matcher m = p.matcher(ch + "");
+            if (m.matches()) {
+                stringBuilder.append(ch);
+            }
+        }
+        return stringBuilder;
     }
 }

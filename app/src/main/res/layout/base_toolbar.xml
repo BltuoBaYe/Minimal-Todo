@@ -9,6 +9,14 @@
                                    android:layout_width="match_parent"
                                    android:layout_height="wrap_content">
 
+    <TextView
+        android:id="@+id/totalJiFeng"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:text="总积分"
+        android:textSize="36sp" />
+
     <!--<TextView-->
     <!--android:textSize="24sp"-->
     <!--android:layout_gravity="center"-->

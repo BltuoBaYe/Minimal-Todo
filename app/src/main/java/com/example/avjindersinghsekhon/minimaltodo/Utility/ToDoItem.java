@@ -8,6 +8,11 @@ import java.util.Date;
 import java.util.UUID;
 
 public class ToDoItem implements Serializable {
+
+    private int mJifeng;//一次的积分
+    private int mTimes;//次数
+    private boolean mflag;//true为加分项目，false为减分项目
+
     private String mToDoText;
     private boolean mHasReminder;
     //add description
@@ -24,6 +29,9 @@ public class ToDoItem implements Serializable {
     private static final String TODOCOLOR = "todocolor";
     private static final String TODODATE = "tododate";
     private static final String TODOIDENTIFIER = "todoidentifier";
+    private static  final  String TIMES = "times";
+    private static final String JIFENG = "jeFeng";
+    private static  final String FLAGS = "flag";
 
 
     public ToDoItem(String todoBody,String tododescription,  boolean hasReminder, Date toDoDate) {
@@ -34,12 +42,28 @@ public class ToDoItem implements Serializable {
         mTodoColor = 1677725;
         mTodoIdentifier = UUID.randomUUID();
     }
+    public ToDoItem(String todoBody,String tododescription,  boolean hasReminder, Date toDoDate , int times , int jifeng , boolean flag) {
+
+        mTimes = times;
+        mJifeng = jifeng;
+        mflag = flag;
+
+        mToDoText = todoBody;
+        mHasReminder = hasReminder;
+        mToDoDate = toDoDate;
+        mToDoDescription = tododescription;
+        mTodoColor = 1677725;
+        mTodoIdentifier = UUID.randomUUID();
+    }
 
     public ToDoItem(JSONObject jsonObject) throws JSONException {
+        mTimes = jsonObject.getInt(TIMES);
+        mJifeng = jsonObject.getInt(JIFENG);
         mToDoText = jsonObject.getString(TODOTEXT);
         mToDoDescription = jsonObject.getString(TODODESCRIPTION);
         mHasReminder = jsonObject.getBoolean(TODOREMINDER);
         mTodoColor = jsonObject.getInt(TODOCOLOR);
+        mflag = jsonObject.getBoolean(FLAGS);
 
         mTodoIdentifier = UUID.fromString(jsonObject.getString(TODOIDENTIFIER));
 
@@ -53,6 +77,10 @@ public class ToDoItem implements Serializable {
 
     public JSONObject toJSON() throws JSONException {
         JSONObject jsonObject = new JSONObject();
+
+        jsonObject.put(FLAGS , mflag);
+        jsonObject.put(TIMES , mTimes);
+        jsonObject.put(JIFENG , mJifeng);
         jsonObject.put(TODOTEXT, mToDoText);
         jsonObject.put(TODOREMINDER, mHasReminder);
         jsonObject.put(TODODESCRIPTION, mToDoDescription);
@@ -69,6 +97,31 @@ public class ToDoItem implements Serializable {
 
     public ToDoItem() {
         this("Clean my room","Sweep and Mop my Room", true, new Date());
+    }
+
+
+    public boolean isMflag() {
+        return mflag;
+    }
+
+    public void setMflag(boolean mflag) {
+        this.mflag = mflag;
+    }
+
+    public int getmJifeng() {
+        return mJifeng;
+    }
+
+    public int getmTimes() {
+        return mTimes;
+    }
+
+    public void setmJifeng(int mJifeng) {
+        this.mJifeng = mJifeng;
+    }
+
+    public void setmTimes(int mTimes) {
+        this.mTimes = mTimes;
     }
 
     public String getmToDoDescription() { return mToDoDescription;}

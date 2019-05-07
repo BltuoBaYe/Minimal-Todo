@@ -53,6 +53,28 @@
 
             </LinearLayout>
 
+            <EditText
+                android:id="@+id/jiFeng"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:inputType="textPersonName"
+                android:text="积分" />
+
+            <EditText
+                android:id="@+id/times"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:inputType="textPersonName"
+                android:text="次数" />
+
+
+            <CheckBox
+                android:id="@+id/FLAG"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="勾选为加分项" />
 
             <com.example.avjindersinghsekhon.minimaltodo.Utility.CustomTextInputLayout
                 android:id="@+id/toDoCustomTextInput01"
@@ -199,8 +221,8 @@
                     <TextView
                         android:id="@+id/newToDoDateTimeReminderTextView"
                         android:layout_width="match_parent"
-                        android:layout_height="0dp"
-                        android:layout_weight="2"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
                         android:gravity="start"
                         android:text="@string/remind_date_and_time"
                         android:textColor="@color/secondary_text"

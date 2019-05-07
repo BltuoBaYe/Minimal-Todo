@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Minimal</string>
+    <string name="app_name">习惯奖惩</string>
 
     <string name="action_settings">设置</string>
     <string name="no_to_dos">任务都完成啦~</string>

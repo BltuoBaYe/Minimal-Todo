@@ -13,7 +13,7 @@ android {
     compileSdkVersion 23
     buildToolsVersion '28.0.3'
     defaultConfig {
-        applicationId "com.avjindersinghsekhon.minimaltodo"
+        applicationId 'com.bl.habitAchieve'
         minSdkVersion 16
         targetSdkVersion 23
         versionCode 3

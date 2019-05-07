@@ -55,6 +55,9 @@ import static android.content.Context.ALARM_SERVICE;
 import static android.content.Context.MODE_PRIVATE;
 
 public class MainFragment extends AppDefaultFragment {
+
+    private int mJiFeng = 0;
+    private TextView mJeFengView;
     private RecyclerViewEmptySupport mRecyclerView;
     private FloatingActionButton mAddToDoItemFAB;
     private ArrayList<ToDoItem> mToDoItemsArrayList;
@@ -136,6 +139,10 @@ public class MainFragment extends AppDefaultFragment {
 
 //        mToDoItemsArrayList = new ArrayList<>();
 //        makeUpItems(mToDoItemsArrayList, testStrings.length);
+
+        View fatherView = view.getRootView();
+        fatherView = fatherView.findViewById(R.id.toolbar);
+        mJeFengView = (TextView) fatherView.findViewById(R.id.totalJiFeng);
 
 
         mCoordLayout = (CoordinatorLayout) view.findViewById(R.id.myCoordinatorLayout);
@@ -244,6 +251,10 @@ public class MainFragment extends AppDefaultFragment {
         super.onResume();
         app.send(this);
 
+        mJiFeng = calcJiFeng();
+        mJeFengView.setText("当前总积分："+Integer.toString(mJiFeng));
+
+
         SharedPreferences sharedPreferences = getActivity().getSharedPreferences(SHARED_PREF_DATA_SET_CHANGED, MODE_PRIVATE);
         if (sharedPreferences.getBoolean(ReminderFragment.EXIT, false)) {
             SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -276,6 +287,8 @@ public class MainFragment extends AppDefaultFragment {
     public void onStart() {
         app = (AnalyticsApplication) getActivity().getApplication();
         super.onStart();
+        mJiFeng = calcJiFeng();
+        mJeFengView.setText("当前总积分"+Integer.toString(mJiFeng));
         SharedPreferences sharedPreferences = getActivity().getSharedPreferences(SHARED_PREF_DATA_SET_CHANGED, MODE_PRIVATE);
         if (sharedPreferences.getBoolean(CHANGE_OCCURED, false)) {
 
@@ -515,7 +528,21 @@ public class MainFragment extends AppDefaultFragment {
                 holder.mTimeTextView.setVisibility(View.GONE);
                 holder.mToDoTextview.setMaxLines(2);
             }
-            holder.mToDoTextview.setText(item.getToDoText());
+
+            //积分*次数
+            int t = item.getmJifeng() * item.getmTimes();
+            String st;
+            if(item.isMflag())
+                st ="当前积分："+t ;
+            else
+                st ="当前积分：-"+t ;
+
+            if(t >  0){
+                holder.mToDoTextview.setText(item.getToDoText() + st);
+            }
+            else {
+                holder.mToDoTextview.setText(item.getToDoText());
+            }
             holder.mToDoTextview.setTextColor(todoTextColor);
 //            holder.mColorTextView.setBackgroundColor(Color.parseColor(item.getTodoColor()));
 
@@ -652,4 +679,23 @@ public class MainFragment extends AppDefaultFragment {
     public static MainFragment newInstance() {
         return new MainFragment();
     }
+
+    //重新计算总积分
+    private int calcJiFeng(){
+        int jifeng = 0;
+
+        for(int i = 0;i < mToDoItemsArrayList.size();i++){
+            int j = mToDoItemsArrayList.get(i).getmTimes() * mToDoItemsArrayList.get(i).getmJifeng();
+            if(j > 0){
+                if(mToDoItemsArrayList.get(i).isMflag()){
+                    jifeng += j;
+                }
+                else{
+                    jifeng -= j;
+                }
+            }
+        }
+        return jifeng;
+    }
+
 }
